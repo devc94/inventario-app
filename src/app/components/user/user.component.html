@@ -1,0 +1,277 @@
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Usuarios</h1>
+      </div><!-- /.col -->
+      <!-- <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard v1</li>
+        </ol>
+      </div>/.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<section class='content'>
+  <div class='container-fluid'>
+    <div class='row'>
+      <div class='col-12 col-sm-12 col-md-12'>
+        <div class='card'>
+          <div class='card-header'>
+            <div class='row'>
+              <div class='col'>
+                <button (click)='openAddUserModal()' [disabled]="!canAdd" class='btn btn-dark float-right'>
+                  Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class='card-body table-responsive'>
+            <table [dtOptions]='dtOptions' [dtTrigger]='dtTrigger'
+                   class='table table-sm table-bordered table-striped hover'
+                   datatable>
+              <thead>
+              <tr>
+                <th scope='col'>#</th>
+                <th scope='col'>Nombre</th>
+                <th scope='col'>Usuario</th>
+                <th scope='col'>Email</th>
+                <th scope='col'>Tipo de Usuario</th>
+                <th scope='col'>Acciones</th>
+              </tr>
+              </thead>
+              <tbody *ngIf='usersList?.length != 0 || usersList'>
+              <tr *ngFor='let u of usersList;index as indexOfElement'>
+                <td class='fit'>{{indexOfElement + 1}}</td>
+                <td>{{u.name}}</td>
+                <td>{{u.username}}</td>
+                <td>{{u.email}}</td>
+                <td>{{u.role.name}}</td>
+                <td class='fit'>
+                  <div class='btn-group' role='group'>
+                    <button (click)='openEditUserModal(u.id)' [disabled]="!canEdit || u.role.id == 1"
+                            class='btn btn-warning'>
+                      <i class='nav-icon fas fa-pen'></i>
+                    </button>
+                    <button (click)='openDeleteUserModal(u.id)' [disabled]="!canDelete || u.role.id == 1"
+                            class='btn btn-danger'>
+                      <i class='nav-icon fas fa-trash'></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+              <tbody *ngIf='usersList?.length === 0'>
+              <tr></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Add User Modal -->
+<div aria-hidden='true' aria-labelledby='addUserModalLabel' class='modal fade'
+     id='addUserModal'
+     role='dialog' tabindex='-1'>
+  <div class='modal-dialog modal-lg modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='addUserModalLabel'>Agregar Usuario</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form (submit)='createUser()' [formGroup]='newUserForm'>
+        <div class='modal-body'>
+          <div class='form-row'>
+            <div class='form-group col-md-4'>
+              <label for='name'>Nombre <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="newUserForm.get('name')?.invalid && (newUserForm.get('name')?.dirty || newUserForm.get('name')?.touched)"
+                aria-describedby="nameInvalid"
+                aria-invalid="true" autocomplete="off" class='form-control' formControlName='name'
+                id='name'
+                type='text'>
+              <span *ngIf="newUserForm.get('name')?.errors?.['required']" class="error invalid-feedback"
+                    id="nameInvalidRequired">Ingrese un nombre</span>
+              <span *ngIf="newUserForm.get('name')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="nameInvalidMaxLength">El nombre no puede tener mas de 50 caracteres</span>
+            </div>
+            <div class='form-group col-md-4'>
+              <label for='username'>Usuario <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="newUserForm.get('username')?.invalid && (newUserForm.get('username')?.dirty || newUserForm.get('username')?.touched)"
+                aria-describedby="userInvalid"
+                aria-invalid="true" autocomplete="off" class='form-control' formControlName='username'
+                id='username' type='text'>
+              <span *ngIf="newUserForm.get('username')?.errors?.['required']" class="error invalid-feedback"
+                    id="usernameInvalidRequired">Ingrese un usuario</span>
+              <span *ngIf="newUserForm.get('username')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="usernameInvalidMaxLength">El usuario no puede tener mas de 10 caracteres</span>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="role">Tipo de Usuario <span class="text-danger">*</span></label>
+              <select
+                [class.is-invalid]="newUserForm.get('role')?.invalid && (newUserForm.get('role')?.dirty || newUserForm.get('role')?.touched)"
+                aria-describedby="roleInvalidRequired" aria-invalid="true" class="form-control" formControlName="role"
+                id="role">
+                <option *ngFor="let r of rolesList" selected value="{{r.id}}">
+                  {{r.name}}
+                </option>
+              </select>
+              <span *ngIf="newUserForm.get('role')?.errors?.['required']" class="error invalid-feedback"
+                    id="roleInvalidRequired">Seleccione un tipo de usuario</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class='form-group col-md-12'>
+              <label for='email'>Correo <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="newUserForm.get('email')?.invalid && (newUserForm.get('email')?.dirty || newUserForm.get('email')?.touched)"
+                aria-describedby="emailInvalid"
+                aria-invalid="true" autocomplete="off" class='form-control' formControlName='email'
+                id='email' type='email'>
+              <span *ngIf="newUserForm.get('name')?.errors?.['required']" class="error invalid-feedback"
+                    id="emailInvalidRequired">Ingrese un correo</span>
+              <span *ngIf="newUserForm.get('name')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="emailInvalidMaxLength">El correo no puede tener mas de 100 caracteres</span>
+            </div>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+          <button [disabled]='newUserForm.invalid' class='btn btn-warning' type='submit'>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div aria-hidden='true' aria-labelledby='editUserModalLabel' class='modal fade' id='editUserModal'
+     role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-lg modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='editUserModalLabel'>Modificar Usuario</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form (submit)='updateUser()' [formGroup]='updateUserForm'>
+        <div class='modal-body'>
+          <div class='form-row'>
+            <div class='form-group col-md-4'>
+              <label for='editName'>Nombre <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="newUserForm.get('name')?.invalid && (newUserForm.get('name')?.dirty || newUserForm.get('name')?.touched)"
+                aria-describedby="nameInvalidEdit"
+                aria-invalid="true" autocomplete="off" class='form-control' formControlName='name'
+                id='editName' type='text'>
+              <span *ngIf="newUserForm.get('name')?.errors?.['required']" class="error invalid-feedback"
+                    id="nameInvalidRequiredEdit">Ingrese un nombre</span>
+              <span *ngIf="newUserForm.get('name')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="nameInvalidMaxLengthEdit">El nombre no puede tener mas de 50 caracteres</span>
+            </div>
+            <div class='form-group col-md-4'>
+              <label for='editUsername'>Usuario <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="newUserForm.get('username')?.invalid && (newUserForm.get('username')?.dirty || newUserForm.get('username')?.touched)"
+                aria-describedby="userInvalidEdit"
+                aria-invalid="true" autocomplete="off" class='form-control'
+                formControlName='username'
+                id='editUsername' type='text'>
+              <span *ngIf="newUserForm.get('username')?.errors?.['required']" class="error invalid-feedback"
+                    id="usernameInvalidRequiredEdit">Ingrese un usuario</span>
+              <span *ngIf="newUserForm.get('username')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="usernameInvalidMaxLengthEdit">El usuario no puede tener mas de 10 caracteres</span>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="editRole">Tipo de Usuario <span class="text-danger">*</span></label>
+              <select
+                [class.is-invalid]="newUserForm.get('role')?.invalid && (newUserForm.get('role')?.dirty || newUserForm.get('role')?.touched)"
+                aria-describedby="roleInvalidEdit" aria-invalid="true" class="form-control" formControlName="role"
+                id="editRole">
+                <option *ngFor="let r of rolesList" selected value="{{r.id}}">
+                  {{r.name}}
+                </option>
+              </select>
+              <span class="error invalid-feedback" id="roleInvalidEdit">Seleccione un tipo de usuario</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class='form-group col-md-12'>
+              <label for='editEmail'>Correo <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="newUserForm.get('email')?.invalid && (newUserForm.get('email')?.dirty || newUserForm.get('email')?.touched)"
+                aria-describedby="emailInvalidEdit"
+                aria-invalid="true" autocomplete="off" class='form-control'
+                formControlName='email'
+                id='editEmail' type='email'>
+              <span *ngIf="newUserForm.get('name')?.errors?.['required']" class="error invalid-feedback"
+                    id="emailInvalidRequiredEdit">Ingrese un correo</span>
+              <span *ngIf="newUserForm.get('name')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="emailInvalidMaxLengthEdit">El correo no puede tener mas de 100 caracteres</span><span
+              class="error invalid-feedback" id="emailInvalidEdit">Ingrese un correo</span>
+            </div>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+          <button [disabled]='updateUserForm.invalid' class='btn btn-warning' type='submit'>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete User Modal -->
+<div aria-hidden='true' aria-labelledby='deleteUserModalLabel' class='modal fade' id='deleteUserModal'
+     role='dialog' tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='deleteUserModalLabel'>Confirmar Eliminación</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        ¿Está seguro de que desea eliminar este usuario?
+      </div>
+      <div class='modal-footer'>
+        <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+        <button (click)='deleteUser()' class='btn btn-danger' type='button'>Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Show New User Password Modal -->
+<div aria-hidden='true' aria-labelledby='showNewUserPasswordModalLabel' class='modal fade' id='showNewUserPasswordModal'
+     role='dialog' tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='showNewUserPasswordModalLabel'>Contraseña del nuevo usuario</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        Esta es la contraseña del usuario recién creado: <span class="font-weight-bold">{{newUserPassword}}</span>
+      </div>
+      <div class='modal-footer'>
+        <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

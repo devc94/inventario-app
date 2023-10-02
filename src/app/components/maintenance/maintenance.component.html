@@ -1,0 +1,234 @@
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Visitas</h1>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<section class='content'>
+  <div class='container-fluid'>
+    <div class='row'>
+      <div class='col-12 col-sm-12 col-md-12'>
+        <div class='card'>
+          <div class='card-header'>
+            <div class='row'>
+              <div class='col'>
+                <button (click)='openAddMaintenanceModal()' [disabled]="!canAdd" class='btn btn-dark float-right'>
+                  Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class='card-body table-responsive'>
+            <table [dtOptions]='dtOptions' [dtTrigger]='dtTrigger'
+                   class='table table-sm table-bordered table-striped hover'
+                   datatable>
+              <thead>
+              <tr>
+                <th scope='col'>#</th>
+                <th scope='col'>Tipo de PC</th>
+                <th scope='col'>Nombre del Equipo</th>
+                <th scope='col'>Numero de Serie</th>
+                <th scope='col'>Fecha</th>
+                <th scope='col'>Fecha Fin</th>
+                <th scope='col'>Agregado por</th>
+                <th scope='col'>Observaciones</th>
+                <th class="fit" scope='col'>Estado</th>
+                <th class="fit" scope='col'>Acciones</th>
+              </tr>
+              </thead>
+              <tbody *ngIf='maintenanceList?.length != 0 || maintenanceList'>
+              <tr *ngFor='let m of maintenanceList;index as indexOfElement'>
+                <td class='fit'>{{indexOfElement + 1}}</td>
+                <td>{{m.equipment.pcType}}</td>
+                <td>{{m.equipment.equipmentName}}</td>
+                <td>{{m.equipment.serialNumber}}</td>
+                <td>{{m.startDate | date: 'dd MMM yyyy'}}</td>
+                <td>{{m.endDate | date: 'dd MMM yyyy'}}</td>
+                <td>{{m.user.name}}</td>
+                <td>{{m.notes}}</td>
+                <td class="fit"><span
+                  [ngClass]="{'bg-warning': m.status == status[0], 'bg-info': m.status == status[1], 'bg-success': m.status == status[2]}"
+                  class="badge badge-pill text-md">{{m.status}}</span></td>
+                <td class='fit'>
+                  <div class='btn-group' role='group'>
+                    <button (click)="changeStatus(m.id!, status[1])"
+                            [disabled]="!canEdit || m.status == status[1] || m.status == status[2]"
+                            class='btn btn-info' data-placement="top" data-toggle="tooltip" title="En Revisión">
+                      <i class='nav-icon fas fa-check'></i>
+                    </button>
+                    <button (click)="changeStatus(m.id!, status[2])" [disabled]="!canDelete || m.status == status[2]"
+                            class='btn btn-success' data-placement="top" data-toggle="tooltip"
+                            title="Revisión Completada">
+                      <i class='nav-icon fas fa-check-double'></i>
+                    </button>
+                    <button (click)="openEditMaintenanceModal(m.id!)" *ngIf="canEdit"
+                            [disabled]="!canEdit"
+                            class='btn btn-warning' data-placement="top" data-toggle="tooltip"
+                            title="Modificar">
+                      <i class='nav-icon fas fa-pen'></i>
+                    </button>
+                    <button (click)="openDeleteMaintenanceModal(m.id!)" *ngIf="canDelete" [disabled]="!canDelete"
+                            class='btn btn-danger' data-placement="top" data-toggle="tooltip"
+                            title="Eliminar">
+                      <i class='nav-icon fas fa-trash'></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+              <tbody *ngIf='maintenanceList?.length == 0'>
+              <tr></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Add Department Modal -->
+<div aria-hidden='true' aria-labelledby='addMaintenanceModalLabel' class='modal fade' id='addMaintenanceModal'
+     role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='addMaintenanceModalLabel'>Agregar Visita</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form (submit)='createMaintenance()' [formGroup]='maintenanceForm'>
+        <div class='modal-body'>
+          <div class='form-row'>
+            <div class='form-group col-md-4'>
+              <label for="equipment">Equipo <span class="text-danger">*</span></label>
+              <select class="form-control" formControlName="equipment" id="equipment">
+                <option *ngFor="let e of equipmentList"
+                        value="{{e.id}}">{{e.equipmentName}} {{e.serialNumber}}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="date">Fecha <span class="text-danger">*</span></label>
+              <div NgTempusdominusBootstrap class="input-group date" data-target-input="nearest" id="date">
+                <input NgTempusdominusBootstrapInput [options]="options"
+                       class="form-control"
+                       formControlName="date"
+                       type="text">
+                <div NgTempusdominusBootstrapToggle class="input-group-append">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+            <div class='form-group col-md-4'>
+              <label for="user">Usuario <span class="text-danger">*</span></label>
+              <select class="form-control" formControlName="user" id="user">
+                <option *ngFor="let u of usersList"
+                        value="{{u.id}}">{{u.name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class='form-group col-md-12'>
+              <label for='notes'>Observaciones</label>
+              <textarea autocomplete="off" class='form-control' formControlName='notes' id='notes'
+                        type='text'></textarea>
+            </div>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+          <button [disabled]='maintenanceForm.invalid' class='btn btn-primary' type='submit'>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Department Modal -->
+<div aria-hidden='true' aria-labelledby='editMaintenanceModalLabel' class='modal fade' id='editMaintenanceModal'
+     role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='editMaintenanceModalLabel'>Modificar Visita</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form (submit)='updateMaintenance()' [formGroup]='maintenanceForm'>
+        <div class='modal-body'>
+          <div class='form-row'>
+            <div class='form-group col-md-4'>
+              <label for="equipmentEdit">Equipo <span class="text-danger">*</span></label>
+              <select [attr.disabled]="true" class="form-control" formControlName="equipment" id="equipmentEdit">
+                <option *ngFor="let e of equipment"
+                        value="{{e.id}}">{{e.equipmentName}} {{e.serialNumber}}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="dateEdit">Fecha <span class="text-danger">*</span></label>
+              <div NgTempusdominusBootstrap class="input-group date" data-target-input="nearest" id="dateEdit">
+                <input NgTempusdominusBootstrapInput [options]="options"
+                       class="form-control"
+                       formControlName="date"
+                       type="text">
+                <div NgTempusdominusBootstrapToggle class="input-group-append">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+            <div class='form-group col-md-4'>
+              <label for="userEdit">Usuario <span class="text-danger">*</span></label>
+              <select class="form-control" formControlName="user" id="userEdit">
+                <option *ngFor="let u of usersList"
+                        value="{{u.id}}">{{u.name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class='form-group col-md-12'>
+              <label for='notesEdit'>Observaciones</label>
+              <textarea autocomplete="off" class='form-control' formControlName='notes' id='notesEdit'
+                        type='text'></textarea>
+            </div>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+          <button [disabled]='maintenanceForm.invalid' class='btn btn-primary' type='submit'>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Maintenance Modal -->
+<div aria-hidden='true' aria-labelledby='deleteMaintenanceModalLabel' class='modal fade' id='deleteMaintenanceModal'
+     role='dialog' tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='deleteMaintenanceModalLabel'>Confirmar Eliminación</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        ¿Está seguro de que desea eliminar esta visita?
+      </div>
+      <div class='modal-footer'>
+        <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+        <button (click)='deleteMaintenance()' class='btn btn-danger' type='button'>Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

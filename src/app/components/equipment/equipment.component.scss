@@ -1,0 +1,9 @@
+table thead tr th.fit,
+table tbody tr td.fit {
+  white-space: nowrap;
+  width: 1%;
+}
+
+table > tbody > tr > td {
+  vertical-align: middle;
+}

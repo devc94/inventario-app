@@ -1,0 +1,259 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 mx-auto">
+        <div class="card card-warning mt-5">
+          <div class="card-header">
+            <h5>Agregar Equipo</h5>
+          </div>
+          <form (submit)="createEquipment()" [formGroup]="equipmentForm">
+            <div class="card-body">
+              <div class="form-row">
+                <div class="form-group col-md-3">
+                  <label for="pcType">Tipo de PC <span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="pcType" id="pcType">
+                    <option selected value="Escritorio">Escritorio</option>
+                    <option value="Portátil">Portátil</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="equipmentName">Nombre Equipo <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('equipmentName')?.invalid && (equipmentForm.get('equipmentName')?.dirty || equipmentForm.get('equipmentName')?.touched)"
+                    autocomplete="off"
+                    class="form-control" formControlName="equipmentName" id="equipmentName" type="text">
+                  <span *ngIf="equipmentForm.get('equipmentName')?.errors?.['required']" class="error invalid-feedback"
+                        id="equipmentNameInvalidRequired">Ingrese un nombre de equipo</span>
+                  <span *ngIf="equipmentForm.get('equipmentName')?.errors?.['maxlength']" class="error invalid-feedback"
+                        id="equipmentNameInvalidMaxLength">El nombre no puede tener más de 50 caracteres</span>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="brand">Marca <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('brand')?.invalid && (equipmentForm.get('brand')?.dirty || equipmentForm.get('brand')?.touched)"
+                    autocomplete="off"
+                    class="form-control" formControlName="brand" id="brand" type="text">
+                  <span *ngIf="equipmentForm.get('brand')?.errors?.['required']" class="error invalid-feedback"
+                        id="brandInvalidRequired">Ingrese una marca</span>
+                  <span *ngIf="equipmentForm.get('brand')?.errors?.['maxlength']" class="error invalid-feedback"
+                        id="brandInvalidMaxLength">La marca no puede tener más de 50 caracteres</span>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="model">Modelo <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('model')?.invalid && (equipmentForm.get('model')?.dirty || equipmentForm.get('model')?.touched)"
+                    autocomplete="off"
+                    class="form-control" formControlName="model" id="model" type="text">
+                  <span *ngIf="equipmentForm.get('modelo')?.errors?.['required']" class="error invalid-feedback"
+                        id="modelInvalidRequired">Ingrese un modelo</span>
+                  <span *ngIf="equipmentForm.get('modelo')?.errors?.['maxlength']" class="error invalid-feedback"
+                        id="modelInvalidMaxLength">El modelo no puede tener más de 50 caracteres</span>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-3">
+                  <label for="serialNumber">Serie <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('serialNumber')?.invalid && (equipmentForm.get('serialNumber')?.dirty || equipmentForm.get('serialNumber')?.touched)"
+                    autocomplete="off"
+                    class="form-control" formControlName="serialNumber" id="serialNumber" type="text">
+                  <span *ngIf="equipmentForm.get('serialNumber')?.errors?.['required']" class="error invalid-feedback"
+                        id="serialNumberInvalidRequired">Ingrese una marca</span>
+                  <span *ngIf="equipmentForm.get('serialNumber')?.errors?.['maxlength']" class="error invalid-feedback"
+                        id="serialNumberInvalidMaxLength">El número de serie no puede tener más de 50 caracteres</span>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="ipAddress">Dirección IP <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('ipAddress')?.invalid && (equipmentForm.get('ipAddress')?.dirty || equipmentForm.get('ipAddress')?.touched)"
+                    [inputMask]="ipAddressMask"
+                    autocomplete="off" class="form-control" formControlName="ipAddress"
+                    id="ipAddress"
+                    type="text">
+                  <span *ngIf="equipmentForm.get('ipAddress')?.errors?.['required']" class="error invalid-feedback"
+                        id="ipAddressInvalidRequired">Ingrese una dirección IP</span>
+                  <span *ngIf="equipmentForm.get('ipAddress')?.errors?.['inputMask']" class="error invalid-feedback"
+                        id="ipAddressInvalidMask">La dirección IP es inválida</span>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="connection">Conexión <span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="connection" id="connection">
+                    <option selected value="Cable">Cable</option>
+                    <option value="Wi-Fi">Wi-Fi</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="connectionType">Tipo de Conexión <span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="connectionType" id="connectionType">
+                    <option selected value="Estática">Estática</option>
+                    <option value="Dinámica">Dinámica</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-3">
+                  <label for="operatingSystem">Sistema Operativo <span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="os" id="operatingSystem">
+                    <option selected value="">Seleccionar...</option>
+                    <option *ngFor="let os of osList" value="{{os.id}}">{{os.name}} {{os.architecture}}</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="osLicense">Licencia Sistema Operativo <span
+                    class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="osLicense" id="osLicense">
+                    <option selected value="SI">SI</option>
+                    <option value="NO">NO</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="processor">Procesador <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('processor')?.invalid && (equipmentForm.get('processor')?.dirty || equipmentForm.get('processor')?.touched)"
+                    autocomplete="off" class="form-control" formControlName="processor" id="processor" type="text">
+                  <span *ngIf="equipmentForm.get('processor')?.errors?.['required']" class="error invalid-feedback"
+                        id="processorInvalidRequired">Ingrese el procesador</span>
+                  <span *ngIf="equipmentForm.get('processor')?.errors?.['maxlength']" class="error invalid-feedback"
+                        id="processorInvalidMaxLength">El procesador no puede tener más de 50 caracteres</span>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="ram">Memoria RAM <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('ram')?.invalid && (equipmentForm.get('ram')?.dirty || equipmentForm.get('ram')?.touched)"
+                    autocomplete="off" class="form-control" formControlName="ram" id="ram" type="text">
+                  <span *ngIf="equipmentForm.get('ram')?.errors?.['required']" class="error invalid-feedback"
+                        id="ramInvalidRequired">Ingrese la memoria ram</span>
+                  <span *ngIf="equipmentForm.get('ram')?.errors?.['maxlength']" class="error invalid-feedback"
+                        id="ramInvalidMaxLength">La memoria ram no puede tener más de 10 caracteres</span>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-3">
+                  <label for="microsoftOffice">Microsoft Office <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('microsoftOffice')?.invalid && (equipmentForm.get('microsoftOffice')?.dirty || equipmentForm.get('microsoftOffice')?.touched)"
+                    autocomplete="off" class="form-control" formControlName="microsoftOffice" id="microsoftOffice"
+                    type="text">
+                  <span *ngIf="equipmentForm.get('microsoftOffice')?.errors?.['required']"
+                        class="error invalid-feedback"
+                        id="microsoftOfficeInvalidRequired">Ingrese el la versión de Office</span>
+                  <span *ngIf="equipmentForm.get('microsoftOffice')?.errors?.['maxlength']"
+                        class="error invalid-feedback"
+                        id="microsoftOfficeInvalidMaxLength">Office no puede tener más de 50 caracteres</span>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="microsoftOfficeLicense">Licencia Microsoft Office <span
+                    class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="microsoftOfficeLicense" id="microsoftOfficeLicense">
+                    <option selected value="SI">SI</option>
+                    <option value="NO">NO</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="antivirus">Antivirus <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('antivirus')?.invalid && (equipmentForm.get('antivirus')?.dirty || equipmentForm.get('antivirus')?.touched)"
+                    autocomplete="off" class="form-control" formControlName="antivirus" id="antivirus" type="text">
+                  <span *ngIf="equipmentForm.get('antivirus')?.errors?.['required']" class="error invalid-feedback"
+                        id="antivirusInvalidRequired">Ingrese el antivirus</span>
+                  <span *ngIf="equipmentForm.get('antivirus')?.errors?.['maxlength']" class="error invalid-feedback"
+                        id="antivirusInvalidMaxLength">El antivirus no puede tener más de 10 caracteres</span>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="anydesk">Anydesk <span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="anydesk" id="anydesk">
+                    <option selected value="SI">SI</option>
+                    <option value="NO">NO</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-3">
+                  <label for="storageUnit">Unidad de Almacenamiento <span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="storageUnit" id="storageUnit">
+                    <option selected value="HDD">HDD</option>
+                    <option value="SSD">SSD</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="storageCapacity">Capacidad de Almacenamiento <span
+                    class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('storageCapacity')?.invalid && (equipmentForm.get('storageCapacity')?.dirty || equipmentForm.get('storageCapacity')?.touched)"
+                    autocomplete="off" class="form-control" formControlName="storageCapacity"
+                    id="storageCapacity"
+                    type="text">
+                  <span *ngIf="equipmentForm.get('storageCapacity')?.errors?.['required']"
+                        class="error invalid-feedback"
+                        id="storageCapacityInvalidRequired">Ingrese la capacidad de almacenamiento</span>
+                  <span *ngIf="equipmentForm.get('storageCapacity')?.errors?.['maxlength']"
+                        class="error invalid-feedback"
+                        id="storageCapacityInvalidMaxLength">La capacidad de almacenamiento no puede tener más de 5 caracteres</span>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="assignedTo">Asignada A <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('assignedTo')?.invalid && (equipmentForm.get('assignedTo')?.dirty || equipmentForm.get('assignedTo')?.touched)"
+                    autocomplete="off" class="form-control" formControlName="assignedTo" id="assignedTo" type="text">
+                  <span *ngIf="equipmentForm.get('assignedTo')?.errors?.['required']" class="error invalid-feedback"
+                        id="assignedToInvalidRequired">Ingrese asignada a</span>
+                  <span *ngIf="equipmentForm.get('assignedTo')?.errors?.['maxlength']" class="error invalid-feedback"
+                        id="assignedToInvalidMaxLength">Asignada a no puede tener más de 100 caracteres</span>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="department">Departamento <span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="department" id="department">
+                    <option selected value="">Seleccionar...</option>
+                    <option *ngFor="let d of departmentList" value="{{d.id}}">{{d.name}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-3">
+                  <label for="job">Puesto <span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="job" id="job">
+                    <option selected value="">Seleccionar...</option>
+                    <option *ngFor="let j of jobsList" value="{{j.id}}">{{j.name}}</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="branchOffice">Sucursal <span class="text-danger">*</span></label>
+                  <select class="form-control" formControlName="branchOffice" id="branchOffice">
+                    <option selected value="">Seleccionar...</option>
+                    <option *ngFor="let bo of boList" value="{{bo.id}}">{{bo.name}}</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="email">Correo <span class="text-danger">*</span></label>
+                  <input
+                    [class.is-invalid]="equipmentForm.get('email')?.invalid && (equipmentForm.get('email')?.dirty || equipmentForm.get('email')?.touched)"
+                    autocomplete="off" class="form-control" formControlName="email" id="email" type="text">
+                  <span *ngIf="equipmentForm.get('email')?.errors?.['email']" class="error invalid-feedback"
+                        id="emailInvalid">Correo no válido</span>
+                  <span *ngIf="equipmentForm.get('email')?.errors?.['required']" class="error invalid-feedback"
+                        id="emailInvalidRequired">Ingrese un correo</span>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-12">
+                  <label for="notes">Observaciones</label>
+                  <textarea
+                    [class.is-invalid]="equipmentForm.get('notes')?.invalid && (equipmentForm.get('notes')?.dirty || equipmentForm.get('notes')?.touched)"
+                    autocomplete="off" class="form-control" formControlName="notes" id="notes"
+                    type="text"></textarea>
+                  <span *ngIf="equipmentForm.get('notes')?.errors?.['maxlength']" class="error invalid-feedback"
+                        id="notesInvalidMaxLength">Observaciones no puede tener más de 100 caracteres</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button [disabled]='equipmentForm.invalid' class='btn btn-warning' type='submit'>
+                Guardar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

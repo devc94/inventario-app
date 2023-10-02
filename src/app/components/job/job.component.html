@@ -1,0 +1,165 @@
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Puestos</h1>
+      </div><!-- /.col -->
+      <!-- <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard v1</li>
+        </ol>
+      </div>/.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<section class='content'>
+  <div class='container-fluid'>
+    <div class='row'>
+      <div class='col-12 col-sm-12 col-md-12'>
+        <div class='card'>
+          <div class='card-header'>
+            <div class='row'>
+              <div class='col'>
+                <button (click)='openAddJobModal()' [disabled]="!canAdd" class='btn btn-dark float-right'>Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class='card-body table-responsive'>
+            <table [dtOptions]='dtOptions' [dtTrigger]='dtTrigger'
+                   class='table table-sm table-bordered table-striped hover'
+                   datatable>
+              <thead>
+              <tr>
+                <th scope='col'>#</th>
+                <th scope='col'>Nombre</th>
+                <th scope='col'>Acciones</th>
+              </tr>
+              </thead>
+              <tbody *ngIf='jobList?.length != 0 || jobList'>
+              <tr *ngFor='let j of jobList;index as indexOfElement'>
+                <td class='fit'>{{indexOfElement + 1}}</td>
+                <td>{{j.name}}</td>
+                <td class='fit'>
+                  <div class='btn-group' role='group'>
+                    <button (click)='openEditJobModal(j.id)' [disabled]="!canEdit" class='btn btn-warning'>
+                      <i class='nav-icon fas fa-pen'></i>
+                    </button>
+                    <button (click)='openDeleteJobModal(j.id)' [disabled]="!canDelete" class='btn btn-danger'>
+                      <i class='nav-icon fas fa-trash'></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+              <tbody *ngIf='jobList?.length === 0'>
+              <tr></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Add Job Modal -->
+<div aria-hidden='true' aria-labelledby='addJobModalLabel' class='modal fade' id='addJobModal' role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='addJobModalLabel'>Agregar Puesto</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form (submit)='createJob()' [formGroup]='jobForm'>
+        <div class='modal-body'>
+          <div class='form-row'>
+            <div class='form-group col-md-12'>
+              <label for='job'>Nombre <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="jobForm.get('name')?.invalid && (jobForm.get('name')?.dirty || jobForm.get('name')?.touched)"
+                aria-describedby="nameInvalid"
+                aria-invalid="true" autocomplete="off" class='form-control' formControlName='name'
+                id='job'
+                type='text'>
+              <span *ngIf="jobForm.get('name')?.errors?.['required']" class="error invalid-feedback"
+                    id="nameInvalidRequired">Ingrese un nombre</span>
+              <span *ngIf="jobForm.get('name')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="nameInvalidMaxLength">El nombre no puede tener mas de 50 caracteres</span>
+            </div>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+          <button [disabled]='jobForm.invalid' class='btn btn-warning' type='submit'>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Job Modal -->
+<div aria-hidden='true' aria-labelledby='editJobModalLabel' class='modal fade' id='editJobModal' role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='editJobModalLabel'>Modificar Puesto</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form (submit)='updateJob()' [formGroup]='jobForm'>
+        <div class='modal-body'>
+          <div class='form-row'>
+            <div class='form-group col-md-12'>
+              <label for='editJob'>Nombre <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="jobForm.get('name')?.invalid && (jobForm.get('name')?.dirty || jobForm.get('name')?.touched)"
+                aria-describedby="nameInvalidEdit"
+                aria-invalid="true" autocomplete="off" class='form-control' formControlName='name'
+                id='editJob' type='text'>
+              <span *ngIf="jobForm.get('name')?.errors?.['required']" class="error invalid-feedback"
+                    id="nameInvalidRequiredEdit">Ingrese un nombre</span>
+              <span *ngIf="jobForm.get('name')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="nameInvalidMaxLengthEdit">El nombre no puede tener mas de 50 caracteres</span>
+            </div>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+          <button [disabled]='jobForm.invalid' class='btn btn-warning' type='submit'>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Job Modal -->
+<div aria-hidden='true' aria-labelledby='deleteJobModalLabel' class='modal fade' id='deleteJobModal' role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='deleteJobModalLabel'>Confirmar Eliminación</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        ¿Está seguro de que desea eliminar este puesto?
+      </div>
+      <div class='modal-footer'>
+        <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+        <button (click)='deleteJob()' class='btn btn-danger' type='button'>Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

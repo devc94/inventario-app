@@ -1,0 +1,109 @@
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Reporte de Inventario</h1>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 col-sm-12 col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-2">
+                <div NgTempusdominusBootstrap class="input-group date" data-target-input="nearest" id="date1">
+                  <input NgTempusdominusBootstrapInput [(ngModel)]="date1"
+                         [options]="options"
+                         class="form-control"
+                         type="text">
+                  <div NgTempusdominusBootstrapToggle class="input-group-append">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-2">
+                <div NgTempusdominusBootstrap class="input-group date" data-target-input="nearest" id="date2">
+                  <input NgTempusdominusBootstrapInput [(ngModel)]="date2"
+                         [options]="options"
+                         class="form-control"
+                         type="text">
+                  <div NgTempusdominusBootstrapToggle class="input-group-append">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <button (click)="getReport()" class="btn btn-dark">Buscar</button>
+                <button (click)="clearData()" [disabled]="equipmentList.length == 0" class="btn btn-dark ml-2">
+                  Limpiar
+                </button>
+              </div>
+              <div class="col">
+                <div class="btn-group float-right">
+                  <button (click)="printReport(false)" [disabled]="equipmentList.length == 0" class="btn btn-default"
+                          type="button">Generar Reporte
+                  </button>
+                  <button [disabled]="equipmentList.length == 0" aria-expanded="false"
+                          class="btn btn-default dropdown-toggle dropdown-icon"
+                          data-toggle="dropdown"
+                          type="button">
+                    <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right" role="menu" style="">
+                    <button (click)="printReport(true)" class="dropdown-item" href="#">Descargar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <table [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-sm table-bordered table-striped"
+                   datatable>
+              <thead>
+              <tr>
+                <th scope='col'>#</th>
+                <th scope='col'>Tipo de PC</th>
+                <th scope='col'>Nombre de Equipo</th>
+                <th scope='col'>Marca</th>
+                <th scope='col'>Modelo</th>
+                <th scope='col'>Sistema Operativo</th>
+                <th scope='col'>Procesador</th>
+                <th scope='col'>RAM</th>
+                <th scope='col'>Unidad de Almacenamiento</th>
+                <th scope='col'>Capacidad de Almacenamiento</th>
+                <th scope='col'>Departamento</th>
+              </tr>
+              </thead>
+              <tbody *ngIf="equipmentList?.length != 0 || equipmentList">
+              <tr *ngFor='let e of equipmentList;index as indexOfElement'>
+                <td class='fit'>{{indexOfElement + 1}}</td>
+                <td>{{e.pcType}}</td>
+                <td>{{e.equipmentName}}</td>
+                <td>{{e.brand}}</td>
+                <td>{{e.model}}</td>
+                <td>{{e.os.name}} {{e.os.architecture}}</td>
+                <td>{{e.processor}}</td>
+                <td>{{e.ram}}</td>
+                <td>{{e.storageUnit}}</td>
+                <td>{{e.storageCapacity}}</td>
+                <td>{{e.department.name}}</td>
+              </tr>
+              </tbody>
+              <tbody *ngIf="equipmentList?.length == 0">
+              <tr>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

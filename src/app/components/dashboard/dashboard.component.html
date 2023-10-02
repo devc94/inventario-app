@@ -1,0 +1,64 @@
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Inicio</h1>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<section class='content'>
+  <div class='container-fluid'>
+    <div class='row'>
+      <div class='col-12 col-sm-12 col-md-12'>
+        <div class='card'>
+          <div class='card-header'>
+            <div class='row'>
+            </div>
+          </div>
+          <div class='card-body table-responsive'>
+            <table [dtOptions]='dtOptions' [dtTrigger]='dtTrigger'
+                   class='table table-sm table-bordered table-striped hover'
+                   datatable>
+              <thead>
+              <tr>
+                <th scope='col'>#</th>
+                <th scope='col'>Tipo de PC</th>
+                <th scope='col'>Nombre del Equipo</th>
+                <th scope='col'>Numero de Serie</th>
+                <th scope='col'>Fecha</th>
+                <th scope='col'>Fecha Fin</th>
+                <th scope='col'>Agregado por</th>
+                <th scope='col'>Observaciones</th>
+                <th class="fit" scope='col'>Estado</th>
+              </tr>
+              </thead>
+              <tbody *ngIf='maintenanceList?.length != 0 || maintenanceList'>
+              <tr *ngFor='let m of maintenanceList;index as indexOfElement'>
+                <td class='fit'>{{indexOfElement + 1}}</td>
+                <td>{{m.equipment.pcType}}</td>
+                <td>{{m.equipment.equipmentName}}</td>
+                <td>{{m.equipment.serialNumber}}</td>
+                <td>{{m.startDate | date: 'dd MMM yyyy'}}</td>
+                <td *ngIf="!m.endDate"></td>
+                <td *ngIf="m.endDate">{{m.endDate | date: 'dd MMM yyyy'}}</td>
+                <td>{{m.user.name}}</td>
+                <td>{{m.notes}}</td>
+                <td class="fit"><span
+                  [ngClass]="{'bg-warning': m.status == status[0], 'bg-info': m.status == status[1], 'bg-success': m.status == status[2]}"
+                  class="badge badge-pill text-md">{{m.status}}</span></td>
+              </tr>
+              </tbody>
+              <tbody *ngIf='maintenanceList?.length === 0'>
+              <tr></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

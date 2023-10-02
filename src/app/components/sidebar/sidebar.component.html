@@ -1,0 +1,172 @@
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-warning elevation-4">
+  <!-- Brand Logo -->
+  <a class="brand-link" routerLink="/">
+    <img alt="AdminLTE Logo" class="brand-image img-circle" src="assets/img/logo.svg"
+         style="opacity: .8">
+    <span class="brand-text font-weight-light">LEYDE</span>
+  </a>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar user panel (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="image">
+        <!--        <img alt="User Image" class="img-circle elevation-2" src="assets/img/user2-160x160.jpg">-->
+      </div>
+      <div class="info">
+        <a *ngIf="!isLogged" class="d-block" routerLink="/">LEYDE</a>
+        <a *ngIf="isLogged" class="d-block" routerLink="/">{{user.name}}</a>
+      </div>
+    </div>
+
+    <!-- SidebarSearch Form -->
+    <!-- <div class="form-inline">
+      <div class="input-group" data-widget="sidebar-search">
+        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+        <div class="input-group-append">
+          <button class="btn btn-sidebar">
+            <i class="fas fa-search fa-fw"></i>
+          </button>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-accordion="false" data-widget="treeview"
+          role="menu">
+        <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+        <li class="nav-item">
+          <a [routerLinkActiveOptions]="{exact: true}" class="nav-link" routerLink="/" routerLinkActive="active">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+              Inicio
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            [ngClass]="{'active': departamento.isActive || sucursal.isActive || puesto.isActive || sistemaOperativo.isActive}"
+            class="nav-link"
+            href="">
+            <i class="nav-icon fas fa-chart-pie"></i>
+            <p>
+              Mantenimiento
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview" style="display: none;">
+            <li class="nav-item">
+              <a #departamento="routerLinkActive" [routerLinkActiveOptions]="{exact: true}" class="nav-link"
+                 routerLink="/departamentos" routerLinkActive="active">
+                <i class="nav-icon far fa-building"></i>
+                <p>
+                  Departamentos
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a #sucursal="routerLinkActive" [routerLinkActiveOptions]="{exact: true}" class="nav-link"
+                 routerLink="/sucursales" routerLinkActive="active">
+                <i class="nav-icon fas fa-building"></i>
+                <p>
+                  Sucursales
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a #puesto="routerLinkActive" [routerLinkActiveOptions]="{exact: true}" class="nav-link"
+                 routerLink="/puestos" routerLinkActive="active">
+                <i class="nav-icon fas fa-briefcase"></i>
+                <p>
+                  Puestos
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a #sistemaOperativo="routerLinkActive" [routerLinkActiveOptions]="{exact: true}" class="nav-link"
+                 routerLink="/sistemas-operativos" routerLinkActive="active">
+                <i class="nav-icon fab fa-windows"></i>
+                <p>
+                  Sistemas Operativos
+                </p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a [routerLinkActiveOptions]="{exact: true}" class="nav-link" routerLink="/inventario"
+             routerLinkActive="active">
+            <i class="nav-icon fas fa-boxes"></i>
+            <p>
+              Inventario
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a [routerLinkActiveOptions]="{exact: true}" class="nav-link" routerLink="/usuarios"
+             routerLinkActive="active">
+            <i class="nav-icon fas fa-user"></i>
+            <p>
+              Usuarios
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a [routerLinkActiveOptions]="{exact: true}" class="nav-link" routerLink="/tipos-de-usuario"
+             routerLinkActive="active">
+            <i class="nav-icon fas fa-user"></i>
+            <p>
+              Tipo de Usuario
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a [routerLinkActiveOptions]="{exact: true}" class="nav-link" routerLink="/visitas"
+             routerLinkActive="active">
+            <i class="nav-icon fas fa-calendar-alt"></i>
+            <p>
+              Visitas
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            [ngClass]="{'active': inventario.isActive || visitas.isActive}"
+            class="nav-link"
+            href="">
+            <i class="nav-icon fas fa-chart-pie"></i>
+            <p>
+              Reportes
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview" style="display: none;">
+            <li class="nav-item">
+              <a #inventario="routerLinkActive" [routerLinkActiveOptions]="{exact: true}" class="nav-link"
+                 routerLink="/reportes/inventario" routerLinkActive="active">
+                <i class="nav-icon fas fa-boxes"></i>
+                <p>
+                  Inventario
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a #visitas="routerLinkActive" [routerLinkActiveOptions]="{exact: true}" class="nav-link"
+                 routerLink="/reportes/visitas" routerLinkActive="active">
+                <i class="nav-icon fas fa-calendar-alt"></i>
+                <p>
+                  Visitas
+                </p>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>

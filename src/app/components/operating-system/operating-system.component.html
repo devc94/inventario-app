@@ -1,0 +1,193 @@
+<!-- Content Header (Page header) -->
+<div class='content-header'>
+  <div class='container-fluid'>
+    <div class='row mb-2'>
+      <div class='col-sm-6'>
+        <h1 class='m-0'>Sistema Operativo</h1>
+      </div><!-- /.col -->
+      <!-- <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard v1</li>
+        </ol>
+      </div>/.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<section class='content'>
+  <div class='container-fluid'>
+    <div class='row'>
+      <div class='col-12 col-sm-12 col-md-12'>
+        <div class='card'>
+          <div class='card-header'>
+            <div class='row'>
+              <div class='col'>
+                <button (click)='openAddOSModal()' [disabled]="!canAdd" class='btn btn-dark float-right'>Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class='card-body table-responsive'>
+            <table [dtOptions]='dtOptions' [dtTrigger]='dtTrigger'
+                   class='table table-sm table-bordered table-striped hover'
+                   datatable>
+              <thead>
+              <tr>
+                <th scope='col'>#</th>
+                <th scope='col'>Nombre</th>
+                <th scope='col'>Arquitectura</th>
+                <th scope='col'>Acciones</th>
+              </tr>
+              </thead>
+              <tbody *ngIf='osList?.length != 0 || osList'>
+              <tr *ngFor='let os of osList;index as indexOfElement'>
+                <td class='fit'>{{indexOfElement + 1}}</td>
+                <td>{{os.name}}</td>
+                <td>{{os.architecture}}</td>
+                <td class='fit'>
+                  <div class='btn-group' role='group'>
+                    <button (click)='openEditOSModal(os.id)' [disabled]="!canEdit" class='btn btn-warning'>
+                      <i class='nav-icon fas fa-pen'></i>
+                    </button>
+                    <button (click)='openDeleteOSModal(os.id)' [disabled]="!canDelete" class='btn btn-danger'>
+                      <i class='nav-icon fas fa-trash'></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+              <tbody *ngIf='osList?.length === 0'>
+              <tr></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Add Department Modal -->
+<div aria-hidden='true' aria-labelledby='addOSModalLabel' class='modal fade' id='addOSModal' role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='addDeparOSLabel'>Agregar Sistema Operativo</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form (submit)='createOperatingSystem()' [formGroup]='osForm'>
+        <div class='modal-body'>
+          <div class='form-row'>
+            <div class='form-group col-md-8'>
+              <label for='os'>Nombre <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="osForm.get('name')?.invalid && (osForm.get('name')?.dirty || osForm.get('name')?.touched)"
+                aria-describedby="nameInvalid"
+                aria-invalid="true" autocomplete="off" class='form-control' formControlName='name'
+                id='os' type='text'>
+              <span *ngIf="osForm.get('name')?.errors?.['required']" class="error invalid-feedback"
+                    id="nameInvalidRequired">Ingrese un nombre</span>
+              <span *ngIf="osForm.get('name')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="nameInvalidMaxLength">El nombre no puede tener mas de 50 caracteres</span>
+            </div>
+            <div class='form-group col-md-4'>
+              <label for='architecture'>Arquitectura <span class="text-danger">*</span></label>
+              <select
+                [class.is-invalid]="osForm.get('architecture')?.invalid && (osForm.get('architecture')?.dirty || osForm.get('architecture')?.touched)"
+                aria-describedby="archInvalid" aria-invalid="true" class='form-control'
+                formControlName='architecture' id='architecture'>
+                <option selected value=''>Seleccionar...</option>
+                <option value='x86'>x86</option>
+                <option value='x64'>x64</option>
+                <option value='ARM'>ARM</option>
+              </select>
+              <span class="error invalid-feedback" id="archInvalid">Selecciona la arquitectuta</span>
+            </div>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+          <button [disabled]='osForm.invalid' class='btn btn-warning' type='submit'>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Department Modal -->
+<div aria-hidden='true' aria-labelledby='editOSModalLabel' class='modal fade' id='editOSModal' role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='editDeparOSLabel'>Modificar Sistema Operativo</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form (submit)='updateOperatingSystem()' [formGroup]='osForm'>
+        <div class='modal-body'>
+          <div class='form-row'>
+            <div class='form-group col-md-8'>
+              <label for='editOS'>Nombre <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="osForm.get('name')?.invalid && (osForm.get('name')?.dirty || osForm.get('name')?.touched)"
+                aria-describedby="nameInvalidEdit"
+                aria-invalid="true" autocomplete="off" class='form-control' formControlName='name'
+                id='editOS' type='text'>
+              <span *ngIf="osForm.get('name')?.errors?.['required']" class="error invalid-feedback"
+                    id="nameInvalidRequiredEdit">Ingrese un nombre</span>
+              <span *ngIf="osForm.get('name')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="nameInvalidMaxLengthEdit">El nombre no puede tener mas de 50 caracteres</span>
+            </div>
+            <div class='form-group col-md-4'>
+              <label for='editArchitecture'>Arquitectura <span class="text-danger">*</span></label>
+              <select
+                [class.is-invalid]="osForm.get('architecture')?.invalid && (osForm.get('architecture')?.dirty || osForm.get('architecture')?.touched)"
+                aria-describedby="archInvalidEdit" aria-invalid="true" class='form-control'
+                formControlName='architecture'
+                id='editArchitecture'>
+                <option selected value=''>Seleccionar...</option>
+                <option value='x86'>x86</option>
+                <option value='x64'>x64</option>
+                <option value='ARM'>ARM</option>
+              </select>
+              <span class="error invalid-feedback" id="archInvalidEdit">Selecciona la arquitectuta</span>
+            </div>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+          <button [disabled]='osForm.invalid' class='btn btn-warning' type='submit'>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Department Modal -->
+<div aria-hidden='true' aria-labelledby='deleteOSModalLabel' class='modal fade' id='deleteOSModal' role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='deleteOSModalLabel'>Confirmar Eliminación</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        ¿Está seguro de que desea eliminar este sistema operativo?
+      </div>
+      <div class='modal-footer'>
+        <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+        <button (click)='deleteOperatingSystem()' class='btn btn-danger' type='button'>Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

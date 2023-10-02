@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <title>AdminLTE 3 | Log in</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+        rel="stylesheet">
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="text-center">
+    <img alt="" class="img-fluid" src="assets/img/logo.svg" width="250">
+  </div>
+  <div class="login-logo">
+    <a href="#"><b>LEYDE</b> S.A.</a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <p class="login-box-msg">Iniciar Sesión</p>
+
+      <form (submit)="login()" [formGroup]="loginForm">
+        <div class="input-group mb-3">
+          <input autocomplete="off" class="form-control" formControlName="username" placeholder="Usuario" required
+                 type="text">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input autocomplete="off" class="form-control" formControlName="password" placeholder="Contraseña"
+                 required type="password">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!--          <div class="col-8">-->
+          <!--            <div class="icheck-primary">-->
+          <!--              <input type="checkbox" id="remember">-->
+          <!--              <label for="remember">-->
+          <!--                Remember Me-->
+          <!--              </label>-->
+          <!--            </div>-->
+          <!--          </div>-->
+          <!-- /.col -->
+          <div class="col-4">
+            <button class="btn btn-warning btn-block" type="submit">Entrar</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+
+      <!--      <p class="mb-1">-->
+      <!--        <a href="forgot-password.html">I forgot my password</a>-->
+      <!--      </p>-->
+      <!--      <p class="mb-0">-->
+      <!--        <a href="register.html" class="text-center">Register a new membership</a>-->
+      <!--      </p>-->
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+</body>
+</html>

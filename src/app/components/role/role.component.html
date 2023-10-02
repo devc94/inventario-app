@@ -1,0 +1,724 @@
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Tipos de Usuario</h1>
+      </div><!-- /.col -->
+      <!-- <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard v1</li>
+        </ol>
+      </div>/.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<section class='content'>
+  <div class='container-fluid'>
+    <div class='row'>
+      <div class='col-12 col-sm-12 col-md-12'>
+        <div class='card'>
+          <div class='card-header'>
+            <div class='row'>
+              <div class='col'>
+                <button (click)='openAddRoleModal()' [disabled]="!canAdd" class='btn btn-dark float-right'>Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class='card-body table-responsive'>
+            <table [dtOptions]='dtOptions' [dtTrigger]='dtTrigger'
+                   class='table table-sm table-bordered table-striped hover'
+                   datatable>
+              <thead>
+              <tr>
+                <th scope='col'>#</th>
+                <th scope='col'>Nombre</th>
+                <th scope='col'>Acciones</th>
+              </tr>
+              </thead>
+              <tbody *ngIf='rolesList?.length != 0 || rolesList'>
+              <tr *ngFor='let d of rolesList;index as indexOfElement'>
+                <td class='fit'>{{indexOfElement + 1}}</td>
+                <td>{{d.name}}</td>
+                <td class='fit'>
+                  <div class='btn-group' role='group'>
+                    <button (click)='openEditRoleModal(d.id)' [disabled]="!canEdit || d.id == 1"
+                            class='btn btn-warning'>
+                      <i class='nav-icon fas fa-pen'></i>
+                    </button>
+                    <button (click)='openDeleteRoleModal(d.id)' [disabled]="!canDelete || d.id == 1"
+                            class='btn btn-danger'>
+                      <i class='nav-icon fas fa-trash'></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+              <tbody *ngIf='rolesList?.length === 0'>
+              <tr></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Add Department Modal -->
+<div aria-hidden='true' aria-labelledby='addRoleModalLabel' class='modal fade' id='addRoleModal' role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='addRoleModalLabel'>Agregar Tipo de Usuario</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form (submit)='createRole()' [formGroup]='rolesForm'>
+        <div class='modal-body'>
+          <div class='form-row'>
+            <div class='form-group col-md-12'>
+              <label for='department'>Nombre <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="rolesForm.get('name')?.invalid && (rolesForm.get('name')?.dirty || rolesForm.get('name')?.touched)"
+                aria-describedby="nameInvalid"
+                aria-invalid="true" autocomplete="off" class='form-control' formControlName='name'
+                id='department' type='text'>
+              <span *ngIf="rolesForm.get('name')?.errors?.['required']" class="error invalid-feedback"
+                    id="nameInvalidRequired">Ingrese un nombre</span>
+              <span *ngIf="rolesForm.get('name')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="nameInvalidMaxLength">El nombre no puede tener mas de 50 caracteres</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #depCheckBox (change)="depStatus()" class="form-check-input"
+                       formControlName="depCheckBox"
+                       id="departmentCheck" type="checkbox">
+                <label class="form-check-label" for="departmentCheck">
+                  Departamentos
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addDep (click)="depAStatus()" class="form-check-input"
+                       formControlName="addDepartment" id="agregarDepartamentoCheck" type="checkbox">
+                <label class="form-check-label" for="agregarDepartamentoCheck">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editDep (click)="depAStatus()" class="form-check-input" formControlName="editDepartment"
+                       id="modificarDepartamentoCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarDepartamentoCheck">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteDep (click)="depAStatus()" class="form-check-input" formControlName="deleteDepartment"
+                       id="eliminarDepartamentoCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarDepartamentoCheck">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #boCheckBox (click)="boStatus()" class="form-check-input" formControlName="boCheckBox"
+                       id="sucursalCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="sucursalCheck">
+                  Sucursales
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addBO (click)="boAStatus()" class="form-check-input" formControlName="addBO"
+                       id="agregarSucursalCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarSucursalCheck">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editBO (click)="boAStatus()" class="form-check-input" formControlName="editBO"
+                       id="modificarSucursalCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarSucursalCheck">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteBO (click)="boAStatus()" class="form-check-input" formControlName="deleteBO"
+                       id="eliminarSucursalCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarSucursalCheck">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #jobCheckBox (click)="jobStatus()" class="form-check-input" formControlName="jobCheckBox"
+                       id="puestoCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="puestoCheck">
+                  Puestos
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addJob (click)="jobAStatus()" class="form-check-input" formControlName="addJob"
+                       id="agregarPuestoCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarPuestoCheck">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editJob (click)="jobAStatus()" class="form-check-input" formControlName="editJob"
+                       id="modificarPuestoCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarPuestoCheck">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteJob (click)="jobAStatus()" class="form-check-input" formControlName="deleteJob"
+                       id="eliminarPuestoCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarPuestoCheck">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #osCheckBox (click)="osStatus()" class="form-check-input" formControlName="soCheckBox"
+                       id="sistemaOperativoCheck" type="checkbox">
+                <label class="form-check-label" for="sistemaOperativoCheck">
+                  Sistemas Operativos
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addOS (click)="osAStatus()" class="form-check-input" formControlName="addSO"
+                       id="agregarSistemaOperativoCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarSistemaOperativoCheck">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editOS (click)="osAStatus()" class="form-check-input" formControlName="editSO"
+                       id="modificarSistemaOperativoCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarSistemaOperativoCheck">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteOS (click)="osAStatus()" class="form-check-input" formControlName="deleteSO"
+                       id="eliminarSistemaOperativoCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarSistemaOperativoCheck">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #eqCheckBox (click)="eqStatus()" class="form-check-input" formControlName="equipmentCheckBox"
+                       id="inventarioCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="inventarioCheck">
+                  Inventario
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addEq (click)="eqAStatus()" class="form-check-input" formControlName="addEquipment"
+                       id="agregarInventarioCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarInventarioCheck">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editEq (click)="eqAStatus()" class="form-check-input" formControlName="editEquipment"
+                       id="modificarInventarioCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarInventarioCheck">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteEq (click)="eqAStatus()" class="form-check-input" formControlName="deleteEquipment"
+                       id="eliminarInventarioCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarInventarioCheck">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #roleCheckBox (click)="roleStatus()" class="form-check-input" formControlName="roleCheckBox"
+                       id="rolCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="rolCheck">
+                  Tipos de Usuario
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addRol (click)="roleAStatus()" class="form-check-input" formControlName="addRole"
+                       id="agregarRolCheck" type="checkbox">
+                <label class="form-check-label" for="agregarRolCheck">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editRol (click)="roleAStatus()" class="form-check-input" formControlName="editRole"
+                       id="modificarRolCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarRolCheck">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteRol (click)="roleAStatus()" class="form-check-input" formControlName="deleteRole"
+                       id="eliminarRolCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarRolCheck">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #userCheckBox (click)="userStatus()" class="form-check-input" formControlName="userCheckBox"
+                       id="usuarioCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="usuarioCheck">
+                  Usuarios
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addUser (click)="userAStatus()" class="form-check-input" formControlName="addUser"
+                       id="agregarUsuarioCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarUsuarioCheck">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editUser (click)="userAStatus()" class="form-check-input" formControlName="editUser"
+                       id="modificarUsuarioCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarUsuarioCheck">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteUser (click)="userAStatus()" class="form-check-input" formControlName="deleteUser"
+                       id="eliminarUsuarioCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarUsuarioCheck">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #mtCheckBox (click)="mtStatus()" class="form-check-input" formControlName="maintenanceCheckBox"
+                       id="visitaCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="visitaCheck">
+                  Visitas
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addMt (click)="mtAStatus()" class="form-check-input" formControlName="addMaintenance"
+                       id="agregarVisitaCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarVisitaCheck">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editMt (click)="mtAStatus()" class="form-check-input" formControlName="editMaintenance"
+                       id="modificarVisitaCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarVisitaCheck">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteMt (click)="mtAStatus()" class="form-check-input" formControlName="deleteMaintenance"
+                       id="eliminarVisitaCheck"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarVisitaCheck">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class='modal-footer'>
+          <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+          <button [disabled]='rolesForm.invalid' class='btn btn-warning' type='submit'>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Department Modal -->
+<div aria-hidden='true' aria-labelledby='editRoleModalLabel' class='modal fade' id='editRoleModal' role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='editRoleModalLabel'>Modificar Tipo de Usuario</h5>
+        <button (click)="closeModal()" aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form (submit)='updateRole()' [formGroup]='rolesFormEdit'>
+        <div class='modal-body'>
+          <div class='form-row'>
+            <div class='form-group col-md-12'>
+              <label for='editDepartment'>Nombre <span class="text-danger">*</span></label>
+              <input
+                [class.is-invalid]="rolesForm.get('name')?.invalid && (rolesForm.get('name')?.dirty || rolesForm.get('name')?.touched)"
+                aria-describedby="nameInvalidEdit"
+                aria-invalid="true" autocomplete="off" class='form-control' formControlName='nameE'
+                id='editDepartment' type='text'>
+              <span *ngIf="rolesForm.get('name')?.errors?.['required']" class="error invalid-feedback"
+                    id="nameInvalidRequiredEdit">Ingrese un nombre</span>
+              <span *ngIf="rolesForm.get('name')?.errors?.['maxlength']" class="error invalid-feedback"
+                    id="nameInvalidMaxLengthEdit">El nombre no puede tener mas de 50 caracteres</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #depCheckBoxEdit (click)="depStatusE()" class="form-check-input" formControlName="depCheckBox"
+                       id="departmentCheckEdit" type="checkbox">
+                <label class="form-check-label" for="departmentCheckEdit">
+                  Departamentos
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addDepEdit (click)="depAStatusE()" class="form-check-input" formControlName="addDepartmentE"
+                       id="agregarDepartamentoCheckEdit" type="checkbox">
+                <label class="form-check-label" for="agregarDepartamentoCheckEdit">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editDepEdit (click)="depAStatusE()" class="form-check-input" formControlName="editDepartmentE"
+                       id="modificarDepartamentoCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarDepartamentoCheckEdit">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteDepEdit (click)="depAStatusE()" class="form-check-input"
+                       formControlName="deleteDepartmentE"
+                       id="eliminarDepartamentoCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarDepartamentoCheckEdit">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #boCheckBoxEdit (click)="boStatusE()" class="form-check-input" formControlName="boCheckBox"
+                       id="sucursalCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="sucursalCheckEdit">
+                  Sucursales
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addBOEdit (click)="boAStatusE()" class="form-check-input" formControlName="addBO"
+                       id="agregarSucursalCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarSucursalCheckEdit">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editBOEdit (click)="boAStatusE()" class="form-check-input" formControlName="editBO"
+                       id="modificarSucursalCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarSucursalCheckEdit">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteBOEdit (click)="boAStatusE()" class="form-check-input" formControlName="deleteBO"
+                       id="eliminarSucursalCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarSucursalCheckEdit">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #jobCheckBoxEdit (click)="jobStatusE()" class="form-check-input" formControlName="jobCheckBox"
+                       id="puestoCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="puestoCheckEdit">
+                  Puestos
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addJobEdit (click)="jobAStatusE()" class="form-check-input" formControlName="addJob"
+                       id="agregarPuestoCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarPuestoCheckEdit">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editJobEdit (click)="jobAStatusE()" class="form-check-input" formControlName="editJob"
+                       id="modificarPuestoCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarPuestoCheckEdit">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteJobEdit (click)="jobAStatusE()" class="form-check-input" formControlName="deleteJob"
+                       id="eliminarPuestoCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarPuestoCheckEdit">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #osCheckBoxEdit (click)="osStatusE()" class="form-check-input" formControlName="soCheckBox"
+                       id="sistemaOperativoCheckEdit" type="checkbox">
+                <label class="form-check-label" for="sistemaOperativoCheckEdit">
+                  Sistemas Operativos
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addOSEdit (click)="osAStatusE()" class="form-check-input" formControlName="addSO"
+                       id="agregarSistemaOperativoCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarSistemaOperativoCheckEdit">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editOSEdit (click)="osAStatusE()" class="form-check-input" formControlName="editSO"
+                       id="modificarSistemaOperativoCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarSistemaOperativoCheckEdit">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteOSEdit (click)="osAStatusE()" class="form-check-input" formControlName="deleteSO"
+                       id="eliminarSistemaOperativoCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarSistemaOperativoCheckEdit">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #eqCheckBoxEdit (click)="eqStatusE()" class="form-check-input"
+                       formControlName="equipmentCheckBox"
+                       id="inventarioCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="inventarioCheckEdit">
+                  Inventario
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addEqEdit (click)="eqAStatusE()" class="form-check-input" formControlName="addEquipment"
+                       id="agregarInventarioCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarInventarioCheckEdit">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editEqEdit (click)="eqAStatusE()" class="form-check-input" formControlName="editEquipment"
+                       id="modificarInventarioCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarInventarioCheckEdit">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteEqEdit (click)="eqAStatusE()" class="form-check-input" formControlName="deleteEquipment"
+                       id="eliminarInventarioCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarInventarioCheckEdit">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #roleCheckBoxEdit (click)="roleStatusE()" class="form-check-input" formControlName="roleCheckBox"
+                       id="rolCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="rolCheckEdit">
+                  Tipos de Usuario
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addRolEdit (click)="roleAStatusE()" class="form-check-input" formControlName="addRole"
+                       id="agregarRolCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarRolCheckEdit">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editRolEdit (click)="roleAStatusE()" class="form-check-input" formControlName="editRole"
+                       id="modificarRolCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarRolCheckEdit">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteRolEdit (click)="roleAStatusE()" class="form-check-input" formControlName="deleteRole"
+                       id="eliminarRolCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarRolCheckEdit">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #userCheckBoxEdit (click)="userStatusE()" class="form-check-input" formControlName="userCheckBox"
+                       id="usuarioCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="usuarioCheckEdit">
+                  Usuarios
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addUserEdit (click)="userAStatusE()" class="form-check-input" formControlName="addUser"
+                       id="agregarUsuarioCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarUsuarioCheckEdit">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editUserEdit (click)="userAStatusE()" class="form-check-input" formControlName="editUser"
+                       id="modificarUsuarioCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarUsuarioCheckEdit">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteUserEdit (click)="userAStatusE()" class="form-check-input" formControlName="deleteUser"
+                       id="eliminarUsuarioCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarUsuarioCheckEdit">Eliminar</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12 m-0">
+              <div class="form-check">
+                <input #mtCheckBoxEdit (click)="mtStatusE()" class="form-check-input"
+                       formControlName="maintenanceCheckBox"
+                       id="visitaCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="visitaCheckEdit">
+                  Visitas
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12 ml-5">
+              <div class="form-check form-check-inline">
+                <input #addMtEdit (click)="mtAStatusE()" class="form-check-input" formControlName="addMaintenance"
+                       id="agregarVisitaCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="agregarVisitaCheckEdit">Agregar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #editMtEdit (click)="mtAStatusE()" class="form-check-input" formControlName="editMaintenance"
+                       id="modificarVisitaCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="modificarVisitaCheckEdit">Modificar</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input #deleteMtEdit (click)="mtAStatusE()" class="form-check-input" formControlName="deleteMaintenance"
+                       id="eliminarVisitaCheckEdit"
+                       type="checkbox">
+                <label class="form-check-label" for="eliminarVisitaCheckEdit">Eliminar</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button (click)="closeModal()" class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+          <button [disabled]='rolesFormEdit.invalid' class='btn btn-warning' type='submit'>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Department Modal -->
+<div aria-hidden='true' aria-labelledby='deleteRoleModalLabel' class='modal fade' id='deleteRoleModal' role='dialog'
+     tabindex='-1'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='deleteRoleModalLabel'>Confirmar Eliminación</h5>
+        <button aria-label='Close' class='close' data-dismiss='modal' type='button'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        ¿Está seguro de que desea eliminar este Tipo de Usuario?
+      </div>
+      <div class='modal-footer'>
+        <button class='btn btn-secondary' data-dismiss='modal' type='button'>Cerrar</button>
+        <button (click)='deleteRole()' class='btn btn-danger' type='button'>Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
